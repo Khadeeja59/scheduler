@@ -1,5 +1,6 @@
 export function getAppointmentsForDay(state, day) {
   const appointments = [];
+  console.log("State.days",state.days)
   const dayArr = state.days.filter(days => days.name === day);
   if (dayArr.length === 0) {
    return appointments;
