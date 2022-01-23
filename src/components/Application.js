@@ -20,14 +20,15 @@ export default function Application(props) {
       axios.get("/api/appointments"),
       axios.get("/api/interviewers")
     ]).then((all) => {
-      setState(prev => ({ ...prev, days: all[0].data, appointments: all[1].data, interviewers: all[2].data}))
-
+      setState(prev => ({ ...prev, days: all[0].data, appointments: all[1].data, interviewers: all[2].data}));
     })
   },[]);
 
   const appointments = getAppointmentsForDay(state, state.day);
+  // console.log("Appointments returned from function", appointments);
   const schedule = appointments.map((appointment) => {
-  const interview = getInterview(appointment.interview);
+  const interview = getInterview(state, appointment.interview);
+  // console.log("Interviews returned from function", appointment.interview);
   return (
     <Appointment
       key={appointment.id}
