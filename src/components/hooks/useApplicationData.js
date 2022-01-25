@@ -22,8 +22,8 @@ useEffect(() => {
   })
 },[]);
 
-const bookInterview = (id, interview, editing) => {
 
+const bookInterview = (id, interview, editing) => {
   const appointment = {
     ...state.appointments[id],
     interview: { ...interview }
@@ -32,7 +32,6 @@ const bookInterview = (id, interview, editing) => {
     ...state.appointments,
     [id]: appointment
   };
-
 const newDays = state.days.map((someDay) => {
   if( someDay.name === state.day && !editing) {
     return {...someDay, spots: someDay.spots-1}
