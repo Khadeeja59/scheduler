@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import "components/Appointment/styles.scss";
 import Header from "./Header";
 import Show from "./Show";
@@ -6,6 +6,7 @@ import Empty from "./Empty";
 import useVisualMode from "../hooks/useVisualMode";
 import Form from "./Form";
 import Confirm from "./Confirm"
+import Status from "./Status"
 import Error from "./Error"
 
 export default function Appointment(props){
@@ -19,22 +20,18 @@ export default function Appointment(props){
   const SAVING = "SAVING";
   const DELETING = "DELETING";
   const { mode, transition, back } = useVisualMode(props.interview ? SHOW : EMPTY);
+  const [editing, setEditing] = useState(false);
   function save(name, interviewer) {
     const interview = {
       student: name,
       interviewer
     };
     transition(SAVING);
-    props.bookInterview(props.id, interview)
+    props.bookInterview(props.id, interview ,editing)
     .then(() => transition(SHOW))
     .catch(error => transition(ERROR_SAVE, true));
   };
 
-//  const deleteInterview = () => {
-//  props.cancelInterview (props.id) 
-//     .then (transition(EMPTY));
-//     console.log("Delete", props.id);
-//  }
 function destroy(event) {
   transition(DELETING, true);
   props
@@ -43,18 +40,31 @@ function destroy(event) {
    .catch(error => transition(ERROR_DELETE, true));
  }
  
+ const edit = () => {
+   transition(EDIT);
+   setEditing(true);
+ }
+ const create = () => {
+  transition(CREATE);
+  setEditing(false);
+}
+ 
   return (
   <article className="appointment">
     {/* {props.time? `Appointment at ${props.time}` : 'No appointments'} */}
   <Header time={props.time} />
   {/* {props.interview ? <Show /> : <Empty  />} */}
-  {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
+  {mode === EMPTY && (
+  <Empty 
+  onAdd={create}
+  />
+  )}
   {mode === SHOW && props.interview && (
   <Show
   student={props.interview.student}
   interviewer={props.interview.interviewer}
   onDelete={()=> transition(CONFIRM)}
-  onEdit={() => transition(EDIT)}
+  onEdit={edit}
   />
 )}
 {mode === CREATE && (
@@ -79,6 +89,16 @@ function destroy(event) {
   interviewers={props.interviewers}
   onCancel = {back}
   onSave = {save}
+  />
+)}
+{mode === SAVING && (
+  <Status 
+  message="Saving..."
+  />
+)}
+{mode === DELETING && (
+  <Status 
+  message="Deleting..."
   />
 )}
 {mode === ERROR_SAVE && (

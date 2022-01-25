@@ -11,6 +11,7 @@ const [state, setState] = useState({
 
 const setDay = day => setState({ ...state, day });
 
+
 useEffect(() => {
   Promise.all([
     axios.get("/api/days"),
@@ -21,8 +22,8 @@ useEffect(() => {
   })
 },[]);
 
-const bookInterview = (id, interview) => {
-  console.log("bookInterview", id, interview);
+const bookInterview = (id, interview, editing) => {
+
   const appointment = {
     ...state.appointments[id],
     interview: { ...interview }
@@ -31,11 +32,19 @@ const bookInterview = (id, interview) => {
     ...state.appointments,
     [id]: appointment
   };
+
+const newDays = state.days.map((someDay) => {
+  if( someDay.name === state.day && !editing) {
+    return {...someDay, spots: someDay.spots-1}
+  }
+  else {
+    return someDay;
+  }
+})
   return axios
     .put(`/api/appointments/${id}`, {interview})
     .then(res => {
-      console.log(res);
-      setState({...state, appointments});
+      setState(prev=> ({...prev, appointments, days:newDays}));
     })
 };
 
@@ -49,15 +58,24 @@ const cancelInterview = (id) => {
     ...state.appointments,
     [id]: appointment
   };
-  console.log(`Appointment: ${appointment}, ID: ${id}, Appointments: ${appointments}`);
+  const newDays = state.days.map((someDay) => {
+    if( someDay.name === state.day) {
+      return {...someDay, spots: someDay.spots +1 }
+    }
+    else {
+      return someDay;
+    }
+  })
+
   return axios
     .delete(`/api/appointments/${id}`)
     .then(res => {
-      console.log('Delete successful');
-      setState({...state, appointments});
+      // console.log('Delete successful');
+      setState(prev=> ({...prev, appointments, days:newDays}));
+
     })
 };
 
 
-return { state, setDay, bookInterview, cancelInterview };
+return { state, setDay, bookInterview, cancelInterview};
 }

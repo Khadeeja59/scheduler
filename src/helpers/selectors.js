@@ -23,7 +23,7 @@ function getInterview(state, interview) {        //appointment.interview
       student: interview.student,
       interviewer: interviewerObj
     };
-    console.log(resultingInterview);
+    // console.log(resultingInterview);
     return resultingInterview;
 };
 
