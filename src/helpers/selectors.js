@@ -12,8 +12,7 @@ function getAppointmentsForDay(state, day) {
   return appointments;
 };
 
-
-function getInterview(state, interview) {        //appointment.interview
+function getInterview(state, interview) {      
     if(!interview) {
       return null;
     }
@@ -23,7 +22,6 @@ function getInterview(state, interview) {        //appointment.interview
       student: interview.student,
       interviewer: interviewerObj
     };
-    // console.log(resultingInterview);
     return resultingInterview;
 };
 
