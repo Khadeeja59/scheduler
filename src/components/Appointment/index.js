@@ -1,13 +1,13 @@
-import React, {useState} from 'react'
+import React from 'react'
 import "components/Appointment/styles.scss";
 import Header from "./Header";
 import Show from "./Show";
 import Empty from "./Empty";
-import useVisualMode from "../hooks/useVisualMode";
 import Form from "./Form";
-import Confirm from "./Confirm"
-import Status from "./Status"
-import Error from "./Error"
+import Confirm from "./Confirm";
+import Status from "./Status";
+import Error from "./Error";
+import useVisualMode from "../hooks/useVisualMode";
 
 export default function Appointment(props){
   const EMPTY = "EMPTY";
@@ -20,14 +20,13 @@ export default function Appointment(props){
   const SAVING = "SAVING";
   const DELETING = "DELETING";
   const { mode, transition, back } = useVisualMode(props.interview ? SHOW : EMPTY);
-  const [editing, setEditing] = useState(false);
   function save(name, interviewer) {
     const interview = {
       student: name,
       interviewer
     };
     transition(SAVING);
-    props.bookInterview(props.id, interview ,editing)
+    props.bookInterview(props.id, interview)
     .then(() => transition(SHOW))
     .catch(error => transition(ERROR_SAVE, true));
   };
@@ -40,49 +39,42 @@ function destroy(event) {
    .catch(error => transition(ERROR_DELETE, true));
  }
  
- const edit = () => {
-   transition(EDIT);
-   setEditing(true);
- }
- const create = () => {
-  transition(CREATE);
-  setEditing(false);
-}
- 
   return (
   <article className="appointment">
-    {/* {props.time? `Appointment at ${props.time}` : 'No appointments'} */}
   <Header time={props.time} />
-  {/* {props.interview ? <Show /> : <Empty  />} */}
+  
   {mode === EMPTY && (
   <Empty 
-  onAdd={create}
+  onAdd={()=>transition(CREATE)}
   />
   )}
+  
   {mode === SHOW && props.interview && (
   <Show
   student={props.interview.student}
   interviewer={props.interview.interviewer}
   onDelete={()=> transition(CONFIRM)}
-  onEdit={edit}
+  onEdit={()=>transition(EDIT)}
   />
-)}
-{mode === CREATE && (
+  )}
+
+  {mode === CREATE && (
   <Form
   interviewers = {props.interviewers}
   onCancel={back}
   onSave={save}
-
   />
-)}
-{mode === CONFIRM && (
+  )}
+  
+  {mode === CONFIRM && (
   <Confirm 
   message="Are you sure you want to delete?"
   onConfirm={destroy}
   onCancel ={back}
   />
-)}
-{mode === EDIT && (
+  )}
+  
+  {mode === EDIT && (
   <Form 
   name={props.interview.student}
   interviewer={props.interview.interviewer.id}
@@ -90,31 +82,35 @@ function destroy(event) {
   onCancel = {back}
   onSave = {save}
   />
-)}
-{mode === SAVING && (
+  )}
+  
+  {mode === SAVING && (
   <Status 
   message="Saving..."
   />
-)}
-{mode === DELETING && (
+  )
+  }
+  
+  {mode === DELETING && (
   <Status 
   message="Deleting..."
   />
-)}
-{mode === ERROR_SAVE && (
+  )}
+  
+  {mode === ERROR_SAVE && (
   <Error 
   message="Unable to save"
   onClose={back}
   />
-)}
-{mode === ERROR_DELETE && (
+  )}
+  
+  {mode === ERROR_DELETE && (
   <Error 
   message="Unable to delete"
   onClose={back}
   />
-)}
+  )}
  
-  {/* {props.interview ? <Show id= {props.id} time={props.time} interview={{student: props.interview.student, interviewer: props.interview.interviewer}} /> : <Empty  />} */}
   </article>
   )
 };

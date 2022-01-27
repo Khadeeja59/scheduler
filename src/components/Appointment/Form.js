@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Button from "../Button";
 import InterviewerList from "../InterviewerList";
 export default function Form(props){
-  const [name, setName] = useState(props.name || "");  //[student,setStudent]
+  const [name, setName] = useState(props.name || ""); 
   const [interviewer, setInterviewer] = useState(props.interviewer || null);
   const [error, setError] = useState("");
 
@@ -23,9 +23,6 @@ export default function Form(props){
     props.onSave(name, interviewer);
   }
 
-  // const save = () => {
-  //   props.onSave(name, interviewer);
-  // }
   return (
     <main className="appointment__card appointment__card--create">
   <section className="appointment__card-left">
