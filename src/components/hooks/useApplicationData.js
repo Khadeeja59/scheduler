@@ -65,7 +65,7 @@ const cancelInterview = (id) => {
       return someDay;
     }
   })
-
+  
   return axios
     .delete(`/api/appointments/${id}`)
     .then(res => {
